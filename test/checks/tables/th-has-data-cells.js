@@ -4,6 +4,7 @@ describe('th-has-data-cells', function () {
 	var fixture = document.getElementById('fixture');
 	var shadowSupport = axe.testUtils.shadowSupport.v1;
 	var checkContext = axe.testUtils.MockCheckContext();
+	var checkSetup = axe.testUtils.checkSetup;
 
 	afterEach(function () {
 		fixture.innerHTML = '';
@@ -119,6 +120,24 @@ describe('th-has-data-cells', function () {
 		axe._tree = axe.utils.getFlattenedTree(fixture);
 		var node = fixture.querySelector('table');
 		assert.isUndefined(checks['th-has-data-cells'].evaluate.call(checkContext, node));
+	});
+
+	it('should return true if table has role="presentation"', function () {
+		var params = checkSetup('<table role="presentation" id="target">' +
+			'  <tr> <th>hi</th> <td></td> </tr>' +
+			'  <tr> <th>hi</th> <td></td> </tr>' +
+			'</table>');
+
+		assert.isTrue(checks['th-has-data-cells'].evaluate.apply(checkContext, params));
+	});
+
+	it('should return true if table has role="none"', function () {
+		var params = checkSetup('<table role="none" id="target">' +
+			'  <tr> <th>hi</th> <td></td> </tr>' +
+			'  <tr> <th>hi</th> <td></td> </tr>' +
+			'</table>');
+
+		assert.isTrue(checks['th-has-data-cells'].evaluate.apply(checkContext, params));
 	});
 
 	(shadowSupport ? it : xit)('recognizes shadow tree content', function () {
